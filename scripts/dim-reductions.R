@@ -33,6 +33,7 @@ res$stage = 0
 res$stage[which(res$sample.dates > as.Date("2014-01-01"))] = 1
 res$stage = as.factor(res$stage)
 ggplot(res, aes(x = x, y = y, label = sample.dates, colour = stage)) + geom_text() -> p
+#plotly_POST(p, filename = "MDS-unifrac", fileopt = "overwrite")
 
 ##################################################
 #--- PCA
@@ -51,14 +52,19 @@ pca.computer = function(df.x, take.log = TRUE, imputing.val = 1e-6){
 
 
 df.genus = read.csv("./data/long_time_cleaned/AG-LS-L6.csv", header = TRUE, stringsAsFactors = FALSE)
-pca.genus = pca.computer(df.genus)
-
-ggplot(pca.genus, aes(x = PC1, y = PC2, label = sample.dates, colour = stage)) + geom_text() -> p
+pca.genus = pca.computer(df.genus, take.log = FALSE)
+ggplot(pca.genus, aes(x = PC1, y = PC2, label = sample.dates, colour = stage)) + 
+  geom_text(size = 8) + ggtitle("AG-LS PCA Genus") -> p
+plotly_POST(p, filename = "PCA-genus-no-imputation", fileopt = "overwrite")
 
 df.family = read.csv("./data/long_time_cleaned/AG-LS-L5.csv", header = TRUE, stringsAsFactors = FALSE)
 pca.family = pca.computer(df.family, take.log = FALSE)
-ggplot(pca.family, aes(x = PC1, y = PC2, label = sample.dates, colour = stage)) + geom_text() -> p
+ggplot(pca.family, aes(x = PC1, y = PC2, label = sample.dates, colour = stage)) + 
+  geom_text(size = 8) + ggtitle("AG-LS PCA Family with log transform<br>(adding 1e-6 to all entries)") -> p
+plotly_POST(p, filename = "PCA-family-imputation", fileopt = "overwrite")
 
 df.order = read.csv("./data/long_time_cleaned/AG-LS-L4.csv", header = TRUE, stringsAsFactors = FALSE)
 pca.order = pca.computer(df.order, take.log = FALSE)
-ggplot(pca.order, aes(x = PC1, y = PC2, label = sample.dates, colour = stage)) + geom_text() -> p
+ggplot(pca.order, aes(x = PC1, y = PC2, label = sample.dates, colour = stage)) + 
+  geom_text(size = 8) + ggtitle("AG-LS PCA Order with log transform<br>(adding 1e-6 to all entries)") -> p
+plotly_POST(p, filename = "PCA-order-imputation", fileopt = "overwrite")
